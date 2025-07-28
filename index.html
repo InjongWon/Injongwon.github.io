@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brian Won (Injong)</title>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --text: #333333;
+            --accent: #666666;
+            --light-gray: #f5f5f5;
+            --border: #eeeeee;
+            --primary: #2d5a87;
+            --secondary: #4a7ba7;
+            --highlight: #3d6b96;
+            --nav-hover: #5a91c7;
+            --gradient-start: #f8fafb;
+            --gradient-end: #e8f2f7;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            border-bottom: 1px solid var(--secondary);
+            padding-bottom: 1px;
+            transition: color 0.2s, border-bottom 0.2s;
+        }
+        
+        a:hover {
+            color: var(--highlight);
+            border-bottom: 2px solid var(--highlight);
+        }
+        
+        header {
+            padding: 30px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            background: linear-gradient(90deg, rgba(45, 90, 135, 0.1) 0%, rgba(74, 123, 167, 0.1) 100%);
+            border-radius: 12px;
+            padding: 15px 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+        
+        nav a {
+            border-bottom: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            color: var(--primary);
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        nav a:hover {
+            background-color: var(--nav-hover);
+            color: white;
+            border-bottom: none;
+            transform: translateY(-2px);
+        }
+        
+        .portfolio-link {
+            font-weight: 500;
+            background-color: var(--primary);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 6px;
+        }
+        
+        .portfolio-link:hover {
+            background-color: var(--highlight);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        section {
+            margin: 40px 0;
+        }
+        
+        h1, h2, h3 {
+            font-weight: 500;
+        }
+        
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--secondary);
+            color: var(--primary);
+        }
+        
+        h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+        }
+        
+        .intro {
+            padding: 0;
+        }
+        
+        .intro h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .intro .subtitle {
+            font-size: 1.1rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+        
+        .intro p {
+            font-size: 1.2rem;
+            color: var(--accent);
+            max-width: 550px;
+        }
+        
+        .contact-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .contact-links a {
+            border-bottom: none;
+            padding: 5px;
+        }
+        
+        .icon {
+            width: 24px;
+            height: 24px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+        
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .skill-category {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .skill-category h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .skill-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .skill-list li {
+            padding: 2px 0;
+            font-size: 0.9rem;
+        }
+        
+        /* Experience list styling */
+        #experience {
+            width: 100%;
+            padding: 0;
+            margin: 40px 0;
+        }
+
+        #experience h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--secondary);
+            color: var(--primary);
+            width: 100%;
+        }
+
+        .experience-item {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .experience-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        .experience-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .experience-title {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+        
+        .experience-company {
+            font-weight: 500;
+            color: var(--text);
+        }
+        
+        .experience-date {
+            color: var(--accent);
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        
+        .experience-description ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            margin: 0;
+        }
+
+        .experience-description li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        .education-content {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        footer {
+            padding: 30px 0;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--accent);
+            border-top: 1px solid var(--border);
+            margin-top: 40px;
+            width: 100%;
+            background: linear-gradient(90deg, rgba(45, 90, 135, 0.05) 0%, rgba(74, 123, 167, 0.05) 100%);
+            border-radius: 12px;
+            padding-top: 20px;
+        }
+        
+        /* Mobile styles */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+            
+            .experience-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+            <h1></h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#about">About</a></li>
+                <li><a href="#experience">Experience</a></li>
+                <li><a href="#education">Education</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="https://portfolio-injongwon.vercel.app" class="portfolio-link" target="_blank">Portfolio</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="intro" id="contact">
+        <h1>Brian Won (Injong)</h1>
+        <p class="subtitle">Toronto, ON</p>
+        <p>Computer Science student at University of Toronto specializing in Networks & Security, with extensive experience in full-stack development and systems programming</p>
+        <div class="contact-links">
+            <a href="mailto:Injongwbrian@gmail.com" title="Email">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+            </a>
+            <a href="tel:6472207325" title="Phone">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+            </a>
+            <a href="https://portfolio-injongwon.vercel.app" title="Portfolio" target="_blank">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M2 12h20"></path>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+            </a>
+        </div>
+    </section>
+
+    <section id="about">
+        <h2>About</h2>
+        <div class="about-content">
+            <div>
+                <p>
+                    I'm a Computer Science student at the University of Toronto, Class of 2025, specializing in Networks & Security. My passion lies at the intersection of systems programming, distributed systems, and full-stack development.
+                </p>
+                <p>
+                    With extensive experience across various co-op positions at companies like IBM, RBC Capital Markets, and Analytic Partners, I've developed expertise in building scalable systems, optimizing performance, and creating robust software solutions. I'm also actively involved in teaching and research at UofT.
+                </p>
+                <h3>Technical Skills</h3>
+                <div class="skills-grid">
+                    <div class="skill-category">
+                        <h4>Languages</h4>
+                        <ul class="skill-list">
+                            <li>Python (OOP, multithreading)</li>
+                            <li>C/C++</li>
+                            <li>Java</li>
+                            <li>JavaScript</li>
+                            <li>SQL</li>
+                            <li>HTML/CSS</li>
+                        </ul>
+                    </div>
+                    <div class="skill-category">
+                        <h4>Frameworks & Tools</h4>
+                        <ul class="skill-list">
+                            <li>React, Next.js</li>
+                            <li>Express, Node.js</li>
+                            <li>Git, Docker</li>
+                            <li>REST APIs</li>
+                            <li>Linux, XML</li>
+                            <li>CI/CD (GitHub Actions)</li>
+                        </ul>
+                    </div>
+                    <div class="skill-category">
+                        <h4>Concepts</h4>
+                        <ul class="skill-list">
+                            <li>Concurrency</li>
+                            <li>Systems Programming</li>
+                            <li>Distributed Systems</li>
+                            <li>Linear Programming</li>
+                            <li>Network Security</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="experience">
+        <h2>Experience</h2>
+        
+        <div class="experience-item">
+            <div class="experience-header">
+                <div>
+                    <div class="experience-title">Undergraduate Researcher</div>
+                    <div class="experience-company">University of Toronto Engineering</div>
+                </div>
+                <div class="experience-date">Apr 2025 – Present</div>
+            </div>
+            <div class="experience-description">
+                <ul>
+                    <li>Engineered a full-stack academic contest platform for UofT Engineering, supporting thousands of concurrent users with real-time leaderboard synchronization</li>
+                    <li>Built a high-concurrency backend to support real-time leaderboard updates and multi-session academic contests, integrating with React/Express pipelines</li>
+                    <li>Designed multi-role session management and secure authentication workflows, connecting SQL-backed access controls to custom RESTful API endpoints</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="experience-item">
+            <div class="experience-header">
+                <div>
+                    <div class="experience-title">Undergraduate Researcher</div>
+                    <div class="experience-company">Vector Institute</div>
+                </div>
+                <div class="experience-date">Jul 2024 – Dec 2024</div>
+            </div>
+            <div class="experience-description">
+                <ul>
+                    <li>Implemented cooperative and preemptive threading models, reducing context-switch latency</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="experience-item">
+            <div class="experience-header">
+                <div>
+                    <div class="experience-title">Software Engineer (Co-op)</div>
+                    <div class="experience-company">RBC Capital Markets</div>
+                </div>
+                <div class="experience-date">Sep 2023 – Dec 2023</div>
+            </div>
+            <div class="experience-description">
+                <ul>
+                    <li>Designed distributed ETL pipelines for financial transaction data, improving processing throughput by 2x with parallel and batch optimization</li>
+                    <li>Created real-time monitoring tools for trade analytics, ensuring uptime and data integrity in high-pressure environments</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="experience-item">
+            <div class="experience-header">
+                <div>
+                    <div class="experience-title">Software Engineer (Co-op)</div>
+                    <div class="experience-company">Analytic Partners</div>
+                </div>
+                <div class="experience-date">May 2023 – Aug 2023</div>
+            </div>
+            <div class="experience-description">
+                <ul>
+                    <li>Designed and maintained Pandas-based services to automate spreadsheet operations for profit and KPI metrics, reducing manual effort by 20%</li>
+                    <li>Integrated E2E testing and collaborated with QA teams to secure revenue-impacting data transformation pipelines</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="experience-item">
+            <div class="experience-header">
+                <div>
+                    <div class="experience-title">Software Engineer (Co-op)</div>
+                    <div class="experience-company">IBM Canada</div>
+                </div>
+                <div class="experience-date">May 2019 – Aug 2020</div>
+            </div>
+            <div class="experience-description">
+                <ul>
+                    <li>Migrated 15k+ LOC Angular frontend from v6 to v8 with full backward compatibility and performance improvement</li>
+                    <li>Built CI/CD pipelines to automate deployments, reducing release cycle time by 30%</li>
+                    <li>Developed unit and E2E test suites with Jasmine and Protractor, improving test coverage and reducing bugs by 35%</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="experience-item">
+            <div class="experience-header">
+                <div>
+                    <div class="experience-title">Teaching Assistant</div>
+                    <div class="experience-company">University of Toronto</div>
+                </div>
+                <div class="experience-date">Multiple Terms</div>
+            </div>
+            <div class="experience-description">
+                <ul>
+                    <li>CSC165: Mathematical Foundation for Computer Science</li>
+                    <li>CSC343: Database Management Systems</li>
+                    <li>CSC2209: Networking Systems (Graduate Network-ML)</li>
+                    <li>Network Algorithms, Operating Systems</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="education">
+        <h2>Education</h2>
+        <div class="education-content">
+            <h3>Bachelor of Science in Computer Science</h3>
+            <p><strong>University of Toronto</strong> • Class of 2025</p>
+            <p><strong>Specialization:</strong> Networks & Security</p>
+            <p><strong>Role:</strong> Teaching Assistant for Network Algorithms, Operating Systems, and other courses</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2025 Brian Won (Injong). All rights reserved.</p>
+    </footer>
+</body>
+</html>
