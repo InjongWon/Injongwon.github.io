@@ -1,0 +1,102 @@
+\documentclass[11pt]{article}
+
+% ---------- Packages ----------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tcolorbox}
+\usepackage{lipsum} % for placeholder text
+
+% ---------- Page Setup ----------
+\geometry{margin=1in}
+\setlength{\parskip}{0.75em}
+\setlength{\parindent}{0pt}
+\pagestyle{fancy}
+\fancyhead[L]{\textit{Hyperparameter Tuning Neural Networks}}
+\fancyhead[R]{\thepage}
+
+% ---------- Section Formatting ----------
+\titleformat{\section}{\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{1em}{}
+
+% ---------- Theorem Styles ----------
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+
+% ---------- Custom Boxes ----------
+\tcbuselibrary{theorems}
+\newtcbtheorem[auto counter, number within=section]{important}{Important}{
+  colback=yellow!10, colframe=yellow!80!black, fonttitle=\bfseries
+}{imp}
+
+% ---------- Title ----------
+\title{\Huge \\[1ex] \Large \textit{Hyperparameter Tuning Neural Networks}}
+\author{Brian Won}
+\date{\today}
+
+% ---------- Document ----------
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+% ---------- Sample Sections ----------
+\section{Lecture 1: Week1}
+\subsection{Definitions}
+
+Data can be split into three parts:
+\begin{itemize}
+    \item Training set: used to train the model
+    \item HoldOut-Cross Validation set(Dev): used to tune the hyperparameters
+    \item Test set: used to evaluate the performance of the model
+\end{itemize}
+
+Split the data into 70/30; training/test.
+Big Data depends on the algorithms decides which one does better.
+
+Human errors are \approx 0\%
+Optimal aka: Bayes Optimal Error Rate is much higher than human errors.
+
+High Variance: Memorizing all letters in the book for an exam, without understanding then even with small changes in the test, the model will perform poorly. Cannot generalize. 
+
+High Bias: Every four legs animals are dogs 
+
+
+
+
+\subsection{Examples}
+\begin{example}
+
+
+\[\left\| w^{[l]} \right\|^2 = \sum_{i=1}^{n^{[l]}} \sum_{j=1}^{n^{[l-1]}} \left( w_{i,j}^{[l]} \right)^2\]
+
+The rows "i" of the matrix is the number of neurons in the layer n.
+Column "j" of the matrix should equal the number of neurons in the layer n-1.
+
+Recall:
+Logistic Regression: to minimize the cost function, we need to find the optimal weights.
+min(J(w,b))
+
+
+
+
+
+\end{example}
+
+
+
+\end{document}
