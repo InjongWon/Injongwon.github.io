@@ -611,21 +611,24 @@
         
         <div class="experience-item">
             <div class="experience-header">
-                <div>
-                    <div class="experience-title">Frontier Open Source LLM Re-Implementation</div>
-                    <div class="experience-company">Python/PyTorch</div>
-                </div>
-                <div class="experience-date">2024</div>
+              <div>
+                <div class="experience-title">Mini ML Inference Serving System</div>
+                <div class="experience-company">FastAPI · Python · Docker · Redis</div>
+              </div>
+              <div class="experience-date">2025</div>
             </div>
+          
             <div class="experience-description">
-                <ul>
-                     <li><strong>PyTorch Implementation:</strong> Architected full PyTorch re-implementation of Qwen3-30B with advanced attention mechanisms (GQA), rotary embeddings (RoPE), and mixture-of-experts (128 experts, top-8 routing)</li>
-                    <li><strong>Hugging Face Integration:</strong> Developed seamless integration with shared download mechanisms and safetensors index mapping for efficient model parameter loading</li>
-                    <li><strong>Advanced Tokenization:</strong> Implemented tokenizer wrapper supporting Qwen3 special tokens and chat template with Coder/Instruct/Thinking model variants</li>
-                    <li><strong>Optimized Inference:</strong> Engineered long-context (262k tokens) inference pipeline with KV caching, correct RoPE offsets, causal masking, and streaming decode capabilities supporting BF16 on CUDA/MPS/CPU</li>
-                </ul>
+              <ul>
+                <li><strong>HTTP Inference API:</strong> Built a production-style inference service that accepts prediction requests over HTTP and returns structured outputs with end-to-end latency tracking.</li>
+                <li><strong>Queueing + Backpressure:</strong> Implemented an asyncio-based request queue with overload protection (429 + rate limits) to prevent tail-latency collapse during traffic spikes.</li>
+                <li><strong>Batched Inference Engine:</strong> Added dynamic batching (max batch size + max wait window) to improve throughput while controlling p95/p99 latency tradeoffs.</li>
+                <li><strong>Metrics + Benchmarks:</strong> Exposed latency/throughput metrics (p50/p95/p99, QPS, queue wait) and ran benchmarks comparing single vs batched serving before/after optimizations.</li>
+                <li><strong>Autoscaling Simulation:</strong> Implemented CPU/QPS-based worker scaling logic and evaluated stability (hysteresis) to avoid oscillation under variable load.</li>
+                <li><strong>Dockerized Deployment:</strong> Packaged the server into Docker with env-configurable batching/worker parameters for reproducible local runs and load testing.</li>
+              </ul>
             </div>
-        </div>
+          </div>
     </section>
     <section id="experience">
         <h2>Experience</h2>
