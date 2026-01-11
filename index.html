@@ -564,7 +564,8 @@
                    Hey! I'm Brian; cs grad from UofT. I'm interested in ml inference and low-level network system.
                 </p>
                 <p>
-                    my focus is on inference optimization to large-scale ML infrastructure with with strong interest in understanding how technical performance impacts AI system reliability and user experience.
+                
+                    My focus is on inference optimization to large-scale ML infrastructure with with strong interest in understanding how technical performance impacts AI system reliability and user experience.
                 </p>
                 <h3>Technical Skills</h3>
                 <div class="skills-grid">
@@ -612,20 +613,23 @@
         <div class="experience-item">
             <div class="experience-header">
               <div>
-                <div class="experience-title">Mini ML Inference Serving System</div>
+                <div class="experience-title">Retrieval-Augmented Inference</div>
                 <div class="experience-company">FastAPI · Python · Docker · Redis</div>
               </div>
-              <div class="experience-date">2025</div>
+              <div class="experience-date">En Route</div>
             </div>
           
             <div class="experience-description">
               <ul>
-                <li><strong>HTTP Inference API:</strong> Built a production-style inference service that accepts prediction requests over HTTP and returns structured outputs with end-to-end latency tracking.</li>
-                <li><strong>Queueing + Backpressure:</strong> Implemented an asyncio-based request queue with overload protection (429 + rate limits) to prevent tail-latency collapse during traffic spikes.</li>
-                <li><strong>Batched Inference Engine:</strong> Added dynamic batching (max batch size + max wait window) to improve throughput while controlling p95/p99 latency tradeoffs.</li>
-                <li><strong>Metrics + Benchmarks:</strong> Exposed latency/throughput metrics (p50/p95/p99, QPS, queue wait) and ran benchmarks comparing single vs batched serving before/after optimizations.</li>
-                <li><strong>Autoscaling Simulation:</strong> Implemented CPU/QPS-based worker scaling logic and evaluated stability (hysteresis) to avoid oscillation under variable load.</li>
-                <li><strong>Dockerized Deployment:</strong> Packaged the server into Docker with env-configurable batching/worker parameters for reproducible local runs and load testing.</li>
+                <li>Actively developing an edge-optimized RAG system for financial analysis, focusing on improving retrieval accuracy, latency, and response grounding.</li>
+
+                <li>Iterating on document ingestion and embedding strategies, including chunking heuristics and metadata-aware retrieval for financial text.</li>
+
+                <li>Exploring evaluation methodologies for RAG systems, comparing standalone LLM outputs against retrieval-augmented responses for factual consistency.</li>
+
+                <li>Experimenting with deployment constraints at the edge, including memory usage, model size trade-offs, and inference performance.</li>
+
+                <li>Investigating future extensions, such as real-time data integration, hybrid dense–sparse retrieval, and more robust prompt orchestration.</li>
               </ul>
             </div>
           </div>
