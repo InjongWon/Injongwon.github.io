@@ -494,6 +494,46 @@
             padding: 15px 18px;
             }
         }
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .project-card {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .project-tag {
+            display: inline-block;
+            background: var(--light-gray);
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin: 5px 5px 5px 0;
+            color: var(--primary);
+        }
+        
+        .demo-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 10px;
+        }
         
         
     </style>
@@ -608,31 +648,34 @@
     </section>
 
     <section id="projects">
-        <h2>Selected Projects</h2>
+        <h2>Featured Projects</h2>
         
-        <div class="experience-item">
-            <div class="experience-header">
-              <div>
-                <div class="experience-title">RAG-Inference</div>
-                <div class="experience-company">Python · RAG · Hugging Face · FAISS · LLM Inference</div>
+        <div class="project-grid">
+            <!-- EdgeRAG Card -->
+            <div class="project-card">
+                <h3>EdgeRAG</h3>
+                <span class="demo-badge">🎮 Interactive Demo Available</span>
+                <p style="margin: 15px 0;">
+                    Production RAG system achieving 62% cost reduction with sub-200ms latency
+                </p>
+                <div>
+                    <span class="project-tag">Python</span>
+                    <span class="project-tag">RAG</span>
+                    <span class="project-tag">FastAPI</span>
+                    <span class="project-tag">React</span>
+                </div>
+                <div style="margin-top: 15px; display: flex; gap: 10px;">
+                    <a href="edgerag.html" style="flex: 1; text-align: center; padding: 10px; background: var(--primary); color: white; border-radius: 6px; border: none;">
+                        Try Demo
+                    </a>
+                    <a href="https://github.com/InjongWon/EdgeRAG" target="_blank" style="flex: 1; text-align: center; padding: 10px; background: var(--secondary); color: white; border-radius: 6px; border: none;">
+                        GitHub
+                    </a>
+                </div>
+            </div>
             
-              <div class="experience-date">En Route</div>
-            </div>
-          
-            <div class="experience-description">
-              <ul>
-                <li>Actively developing an edge-optimized RAG system for financial analysis, focusing on improving retrieval accuracy, latency, and response grounding.</li>
-
-                <li>Iterating on document ingestion and embedding strategies, including chunking heuristics and metadata-aware retrieval for financial text.</li>
-
-                <li>Exploring evaluation methodologies for RAG systems, comparing standalone LLM outputs against retrieval-augmented responses for factual consistency.</li>
-
-                <li>Experimenting with deployment constraints at the edge, including memory usage, model size trade-offs, and inference performance.</li>
-
-                <li>Investigating future extensions, such as real-time data integration, hybrid dense–sparse retrieval, and more robust prompt orchestration.</li>
-              </ul>
-            </div>
-          </div>
+            <!-- Add more project cards here -->
+        </div>
     </section>
     <section id="experience">
         <h2>Experience</h2>
