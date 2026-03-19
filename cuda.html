@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CUDA & PyTorch Internals — Brian Won</title>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --text: #333333;
+            --accent: #666666;
+            --border: #eeeeee;
+            --primary: #2d5a87;
+            --secondary: #4a7ba7;
+            --highlight: #3d6b96;
+            --light-gray: #f5f5f5;
+            --gradient-start: #f8fafb;
+            --gradient-end: #e8f2f7;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.7;
+            color: var(--text);
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+            min-height: 100vh;
+        }
+        .page-wrap {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 2rem 24px 4rem;
+        }
+        .top-nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 48px;
+            font-size: 0.9rem;
+        }
+        .top-nav a { color: var(--primary); text-decoration: none; border-bottom: 1px solid transparent; transition: border-bottom .15s; }
+        .top-nav a:hover { border-bottom: 1px solid var(--primary); }
+        .top-nav .sep { color: var(--accent); opacity: .5; }
+
+        .post-hero { margin-bottom: 48px; }
+        .post-tag {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: .09em;
+            text-transform: uppercase;
+            color: var(--primary);
+            background: rgba(45,90,135,.1);
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-bottom: 14px;
+        }
+        .post-hero h1 {
+            font-size: 2.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1.25;
+            margin-bottom: 14px;
+        }
+        .post-meta { font-size: 0.85rem; color: var(--accent); display: flex; gap: 14px; flex-wrap: wrap; }
+
+        .toc {
+            background: white;
+            border-radius: 10px;
+            padding: 20px 24px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.06);
+            margin-bottom: 44px;
+        }
+        .toc h4 {
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+        .toc ol { padding-left: 18px; }
+        .toc li { margin-bottom: 5px; }
+        .toc a { color: var(--primary); font-size: 0.88rem; text-decoration: none; border-bottom: 1px solid transparent; transition: border-bottom .15s; }
+        .toc a:hover { border-bottom: 1px solid var(--primary); }
+
+        .post-body h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            border-left: 4px solid var(--secondary);
+            padding-left: 14px;
+            margin: 44px 0 16px;
+        }
+        .post-body h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--highlight);
+            margin: 28px 0 10px;
+        }
+        .post-body p { margin-bottom: 16px; font-size: 0.97rem; }
+        .post-body ul, .post-body ol { padding-left: 22px; margin-bottom: 16px; }
+        .post-body li { margin-bottom: 7px; font-size: 0.95rem; }
+        .post-body code {
+            background: rgba(45,90,135,.08);
+            color: var(--primary);
+            font-family: "SF Mono", "Fira Code", monospace;
+            font-size: 0.83em;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .post-body pre {
+            background: #1e2d3d;
+            color: #c9d8e8;
+            border-radius: 8px;
+            padding: 18px 20px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            font-family: "SF Mono", "Fira Code", monospace;
+            line-height: 1.6;
+        }
+        .callout {
+            background: rgba(45,90,135,.07);
+            border-left: 4px solid var(--secondary);
+            border-radius: 0 8px 8px 0;
+            padding: 14px 18px;
+            margin: 20px 0;
+            font-size: 0.92rem;
+        }
+        .callout strong { color: var(--primary); }
+
+        /* Chapter divider */
+        .chapter-divider {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 50px 0 32px;
+        }
+        .chapter-divider .ch-label {
+            white-space: nowrap;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--secondary);
+            background: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,.07);
+        }
+        .chapter-divider hr { flex: 1; border: none; border-top: 1px solid var(--border); }
+
+        /* Memory hierarchy diagram */
+        .mem-stack { margin: 20px 0; }
+        .mem-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 6px;
+        }
+        .mem-bar {
+            height: 34px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            padding: 0 14px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: white;
+            min-width: 120px;
+            flex-shrink: 0;
+        }
+        .mem-registers { background: #1e3a5f; width: 95px; }
+        .mem-shared   { background: #2d5a87; width: 150px; }
+        .mem-l1       { background: #3d6b96; width: 200px; }
+        .mem-l2       { background: #4a7ba7; width: 260px; }
+        .mem-global   { background: #5a91c7; width: 340px; }
+        .mem-desc { font-size: 0.82rem; color: var(--accent); }
+
+        /* PyTorch section styling */
+        .dispatch-flow {
+            background: white;
+            border-radius: 10px;
+            padding: 20px 24px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.06);
+            margin: 20px 0;
+            font-size: 0.88rem;
+        }
+        .dispatch-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .dispatch-step:last-child { border-bottom: none; }
+        .dispatch-num {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            font-size: 0.78rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .dispatch-step p { margin: 0; line-height: 1.5; }
+        .dispatch-step strong { color: var(--primary); }
+
+        /* Source citation */
+        .source-note {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            font-size: 0.83rem;
+            color: var(--accent);
+        }
+        .source-note a { color: var(--primary); }
+
+        @media (max-width: 600px) {
+            .post-hero h1 { font-size: 1.6rem; }
+            .mem-global { width: 220px; }
+        }
+    </style>
+</head>
+<body>
+<div class="page-wrap">
+
+    <nav class="top-nav">
+        <a href="blog.html">← Blog</a>
+        <span class="sep">/</span>
+        <span>CUDA & PyTorch</span>
+    </nav>
+
+    <div class="post-hero">
+        <span class="post-tag">ML Internals</span>
+        <h1>CUDA Programming Model (Ch. 1–5) + PyTorch Internals</h1>
+        <div class="post-meta">
+            <span>Brian Won</span>
+            <span>·</span>
+            <span>Feb 2025</span>
+            <span>·</span>
+            <span>22 min read</span>
+        </div>
+    </div>
+
+    <div class="toc">
+        <h4>Contents</h4>
+        <ol>
+            <li><a href="#ch1">Ch. 1–3: Why GPUs? The CUDA origin story</a></li>
+            <li><a href="#ch4">Ch. 4: Kernels and the thread hierarchy</a></li>
+            <li><a href="#ch5-mem">Ch. 5: Memory hierarchy</a></li>
+            <li><a href="#ch5-async">Ch. 5: Heterogeneous & async programming</a></li>
+            <li><a href="#pytorch-tensor">PyTorch: Tensors, strides, and storage</a></li>
+            <li><a href="#pytorch-dispatch">PyTorch: The dispatch chain</a></li>
+            <li><a href="#pytorch-autograd">PyTorch: Autograd internals</a></li>
+            <li><a href="#pytorch-kernel">PyTorch: Writing a kernel</a></li>
+        </ol>
+    </div>
+
+    <div class="post-body">
+
+        <!-- CUDA Programming Model -->
+        <div class="chapter-divider">
+            <span class="ch-label">Part 1 — CUDA C++ Programming Guide, Ch. 1–5</span>
+            <hr>
+        </div>
+
+        <h2 id="ch1">Ch. 1–3: Why GPUs? The CUDA Origin Story</h2>
+        <p>Modern CPUs are designed for low-latency serial execution. They devote most of their transistor budget to cache hierarchies, branch predictors, and out-of-order execution logic — all aimed at making a single thread run as fast as possible. GPUs make the opposite tradeoff: thousands of smaller, simpler cores optimized for <strong>throughput over latency</strong>.</p>
+        <p>CUDA (Compute Unified Device Architecture) was introduced by NVIDIA in 2006 to expose this parallelism to general-purpose workloads beyond graphics. The programming model extends C++ with a small set of keywords and a new execution model built around the idea that you have many thousands of identical threads running simultaneously.</p>
+        <p>The key insight of the scalable programming model: a program written for a small GPU will run correctly (though slower) on a GPU with fewer multiprocessors, and will automatically scale up on a more powerful GPU. You don't target a specific number of cores — the hardware schedules your work.</p>
+
+        <h2 id="ch4">Ch. 4: Kernels and the Thread Hierarchy</h2>
+        <h3>Kernels</h3>
+        <p>A <strong>kernel</strong> is a C++ function that runs on the GPU. It's declared with the <code>__global__</code> qualifier. You invoke it from host (CPU) code using the <code>&lt;&lt;&lt;...&gt;&gt;&gt;</code> syntax, specifying how many threads to launch:</p>
+
+        <pre>
+__global__ void vecAdd(float* A, float* B, float* C, int n) {
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < n) C[i] = A[i] + B[i];
+}
+
+// Launch 1024 threads in blocks of 256
+vecAdd&lt;&lt;&lt;4, 256&gt;&gt;&gt;(dA, dB, dC, 1024);</pre>
+
+        <p>Each thread has its own index (<code>threadIdx</code>) and knows which block it belongs to (<code>blockIdx</code>). This gives it a unique global identity, used to partition the work.</p>
+
+        <h3>Thread Hierarchy: threads → blocks → grid</h3>
+        <ul>
+            <li><strong>Thread</strong>: the fundamental execution unit. Runs one instance of the kernel.</li>
+            <li><strong>Block</strong>: a group of threads (up to 1024) that can cooperate via <strong>shared memory</strong> and synchronize with <code>__syncthreads()</code>. Blocks execute on a single Streaming Multiprocessor (SM).</li>
+            <li><strong>Grid</strong>: the collection of all blocks for a kernel launch. Blocks within a grid are independent — no synchronization is possible between blocks within a single launch.</li>
+        </ul>
+        <p>Blocks can be 1D, 2D, or 3D (useful for images or volumetric data). Starting with compute capability 9.0 (Hopper), <strong>Thread Block Clusters</strong> add an optional grouping above blocks, allowing cooperative execution across multiple SMs.</p>
+
+        <div class="callout">
+            <strong>Warp:</strong> The hardware schedules threads in groups of 32 called <em>warps</em>. All threads in a warp execute the same instruction (SIMT — Single Instruction, Multiple Threads). Divergent branches (if-else where threads go different ways) serialize, reducing throughput. Minimizing warp divergence is one of the first GPU optimization rules.
+        </div>
+
+        <h2 id="ch5-mem">Ch. 5: Memory Hierarchy</h2>
+        <p>Memory is the central bottleneck on GPUs. Understanding the hierarchy is essential for writing fast kernels.</p>
+
+        <div class="mem-stack">
+            <div class="mem-row">
+                <div class="mem-bar mem-registers">Registers</div>
+                <div class="mem-desc">Per-thread. ~255 registers/thread. Fastest. Spills to local memory if exceeded.</div>
+            </div>
+            <div class="mem-row">
+                <div class="mem-bar mem-shared">Shared Memory</div>
+                <div class="mem-desc">Per-block. 48–228 KB/SM. Low latency (~5 cycles). Programmable L1 cache. Critical for tiling.</div>
+            </div>
+            <div class="mem-row">
+                <div class="mem-bar mem-l1">L1 Cache</div>
+                <div class="mem-desc">Per-SM. Shares SRAM with shared memory (configurable split).</div>
+            </div>
+            <div class="mem-row">
+                <div class="mem-bar mem-l2">L2 Cache</div>
+                <div class="mem-desc">Device-wide. Several MB. ~100-cycle latency. CUDA 11.1+ allows pinning residency for streaming workloads.</div>
+            </div>
+            <div class="mem-row">
+                <div class="mem-bar mem-global">Global Memory</div>
+                <div class="mem-desc">HBM2/HBM3. Up to 80 GB on H100. ~600–800 cycles. The main data store. Coalescing accesses is critical.</div>
+            </div>
+        </div>
+
+        <h3>Coalescing</h3>
+        <p>When threads in a warp access consecutive memory addresses, the hardware can satisfy the whole warp in a single transaction. This is called <strong>coalesced access</strong>. Strided or random accesses require multiple transactions, multiplying memory bandwidth consumption. Always arrange data so neighboring threads access neighboring addresses.</p>
+
+        <h3>Shared Memory Tiling Pattern</h3>
+        <p>The canonical technique for compute-bound kernels (matrix multiply being the textbook example) is to tile the computation: load a tile of data from global memory into shared memory, synchronize, compute, and repeat. This replaces many slow global reads with fast shared memory reads.</p>
+
+        <pre>
+__shared__ float tile_A[TILE][TILE];
+__shared__ float tile_B[TILE][TILE];
+
+// load phase
+tile_A[ty][tx] = A[row * N + (phase * TILE + tx)];
+tile_B[ty][tx] = B[(phase * TILE + ty) * N + col];
+__syncthreads();
+
+// compute phase
+for (int k = 0; k < TILE; ++k)
+    sum += tile_A[ty][k] * tile_B[k][tx];
+__syncthreads();</pre>
+
+        <h2 id="ch5-async">Ch. 5: Heterogeneous & Async Programming</h2>
+        <h3>The CPU–GPU Relationship</h3>
+        <p>CUDA treats the CPU as the <strong>host</strong> and the GPU as the <strong>device</strong>. They have separate memory spaces (unless using unified memory). The typical flow: allocate device memory (<code>cudaMalloc</code>), copy data from host to device (<code>cudaMemcpy H2D</code>), launch kernels, copy results back (<code>cudaMemcpy D2H</code>), free.</p>
+        <p>Kernel launches are asynchronous by default — the host thread returns immediately and can queue multiple kernels or H2D/D2H transfers. <strong>Streams</strong> are ordered queues of GPU work; operations in the same stream execute in order, while operations in different streams can overlap.</p>
+
+        <h3>Asynchronous SIMT and Compute Capability</h3>
+        <p>The asynchronous programming model deepens with newer hardware. <code>cuda::barrier</code> and <code>cuda::pipeline</code> (CUDA 11+) allow finer-grained producer-consumer pipelining within a block — threads can issue async copies with <code>memcpy_async</code> into shared memory while other threads compute on previously loaded data. This double-buffering pattern is fundamental in tensor core matmul implementations. <strong>Compute capability</strong> is a versioned number (e.g., 8.0 for Ampere, 9.0 for Hopper) that gates which hardware features are available.</p>
+
+        <!-- PART 2: PyTorch -->
+        <div class="chapter-divider">
+            <span class="ch-label">Part 2 — PyTorch Internals (ezyang, 2019)</span>
+            <hr>
+        </div>
+
+        <h2 id="pytorch-tensor">PyTorch: Tensors, Strides, and Storage</h2>
+        <p>The tensor is the central data structure in PyTorch. Most users think of it as an n-dimensional array with a dtype, a device, and a shape. But the actual implementation is richer.</p>
+
+        <h3>Storage and the Tensor–Storage Split</h3>
+        <p>Physically, data lives in a <strong>Storage</strong> object: a flat, typed, device-resident buffer. A <strong>Tensor</strong> is a view on top of a Storage — it records sizes, strides, and an offset, but shares the underlying bytes. This is what enables zero-copy slicing and transposing.</p>
+
+        <pre>
+x = torch.zeros(4, 4)
+row = x[1, :]  # new Tensor, same Storage, offset=4, strides=(1,)
+col = x[:, 0]  # new Tensor, same Storage, offset=0, strides=(4,)</pre>
+
+        <h3>Strides: the key abstraction</h3>
+        <p>To find element <code>tensor[i, j]</code> in physical memory: <code>offset + i * stride[0] + j * stride[1]</code>. For a contiguous row-major <code>(M, N)</code> tensor, strides are <code>(N, 1)</code>. A transpose flips them to <code>(1, M)</code> — no data copy required, just a metadata change. Many PyTorch "views" (slice, reshape, permute) are purely stride arithmetic.</p>
+
+        <div class="callout">
+            <strong>Contiguous check:</strong> <code>tensor.is_contiguous()</code> returns true when strides follow the standard row-major layout. Calling <code>.contiguous()</code> on a non-contiguous tensor triggers a copy. Many CUDA kernels require contiguous input — this is a common source of hidden copies in production code.
+        </div>
+
+        <h3>The three extension axes</h3>
+        <p>Every tensor is characterized by three orthogonal parameters that define a Cartesian product of possible tensor types:</p>
+        <ul>
+            <li><strong>device</strong>: where the storage lives (<code>cpu</code>, <code>cuda</code>, <code>xla</code>, <code>hip</code>). Each device has its own allocator.</li>
+            <li><strong>layout</strong>: how logical indices map to physical memory (<code>strided</code>, <code>sparse_coo</code>, <code>sparse_csr</code>, MKL-DNN blocked, etc.)</li>
+            <li><strong>dtype</strong>: the scalar type (<code>float32</code>, <code>bfloat16</code>, <code>int8</code>, quantized types, etc.)</li>
+        </ul>
+
+        <h2 id="pytorch-dispatch">PyTorch: The Dispatch Chain</h2>
+        <p>When you call <code>torch.add(a, b)</code>, what actually happens? It's a two-level dispatch:</p>
+
+        <div class="dispatch-flow">
+            <div class="dispatch-step">
+                <div class="dispatch-num">1</div>
+                <p><strong>Python → C++ boundary.</strong> Autogenerated binding code (<code>THPVariable_add</code>) uses <code>PythonArgParser</code> to extract C++ tensors from Python arguments, releases the GIL, and calls into C++.</p>
+            </div>
+            <div class="dispatch-step">
+                <div class="dispatch-num">2</div>
+                <p><strong>Variable (autograd) dispatch.</strong> The Variable layer unwraps tensors, records the operation in the autograd graph if <code>requires_grad=True</code>, then calls the underlying implementation.</p>
+            </div>
+            <div class="dispatch-step">
+                <div class="dispatch-num">3</div>
+                <p><strong>Device/layout dispatch.</strong> A virtual call on a "Type" object routes to the right backend — <code>CPUFloatType</code>, <code>CUDAHalfType</code>, etc. This is a dynamic dispatch because CPU and CUDA kernels live in separate shared libraries.</p>
+            </div>
+            <div class="dispatch-step">
+                <div class="dispatch-num">4</div>
+                <p><strong>dtype dispatch.</strong> Inside the backend kernel, <code>AT_DISPATCH_ALL_TYPES</code> (a switch macro) selects the concrete scalar-type specialization and jumps into the numeric computation.</p>
+            </div>
+        </div>
+
+        <p>All code up to step 4 is <strong>autogenerated</strong> from operator schemas defined in <code>native_functions.yaml</code>. This is why you can add a new operator, write a single kernel, and automatically get Python bindings, gradient support, and dtype dispatch — without touching binding or dispatch code manually.</p>
+
+        <h3>Key directories in the PyTorch codebase</h3>
+        <ul>
+            <li><code>torch/</code> — Python modules you import. Easy to hack on.</li>
+            <li><code>torch/csrc/</code> — C++ Python bindings + autograd engine + JIT.</li>
+            <li><code>aten/src/ATen/native/</code> — the actual operator kernels (modern C++).</li>
+            <li><code>c10/</code> — core abstractions: <code>TensorImpl</code>, <code>Storage</code>, device/dtype types.</li>
+        </ul>
+
+        <h2 id="pytorch-autograd">PyTorch: Autograd Internals</h2>
+        <p>PyTorch implements <strong>reverse-mode automatic differentiation</strong>. The forward pass builds a dynamic computation graph (a DAG of <code>Function</code> nodes). Each node stores the inputs needed to compute its backward pass. When you call <code>loss.backward()</code>, the autograd engine traverses this graph in reverse, accumulating gradients.</p>
+
+        <p>The variable wrapping adds an <code>AutogradMeta</code> struct to each tensor that stores:</p>
+        <ul>
+            <li>The <code>grad_fn</code>: the <code>Function</code> that produced this tensor (null for leaf tensors)</li>
+            <li>The accumulated <code>.grad</code></li>
+            <li>Whether <code>requires_grad</code> is set</li>
+        </ul>
+
+        <p>Technically, the gradients computed are not pure gradients but <strong>Jacobian-vector products</strong> (JVPs with the upstream gradient vector). For scalar losses this simplifies to standard gradients. For vector-valued outputs you need <code>torch.autograd.grad</code> with explicit <code>grad_outputs</code>.</p>
+
+        <div class="callout">
+            <strong>In-place operations and autograd:</strong> In-place ops (<code>x += 1</code>) that modify a tensor needed for a backward pass will raise a <code>RuntimeError</code>. This is not a limitation — it's a correctness guard. If you're hitting this in production, check for unexpected in-place ops in your model.
+        </div>
+
+        <h2 id="pytorch-kernel">PyTorch: What Writing a Kernel Actually Looks Like</h2>
+        <p>A kernel in ATen native consists of:</p>
+        <ol>
+            <li><strong>Schema</strong> in <code>native_functions.yaml</code>: declares signature, dispatch keys, and whether it has an <code>out=</code> variant or an in-place variant.</li>
+            <li><strong>Error checking</strong> using <code>TORCH_CHECK(cond, "message")</code> or higher-level <code>checkDim()</code> helpers.</li>
+            <li><strong>Output allocation</strong>: create the result tensor via <code>at::empty</code> or <code>at::zeros</code>.</li>
+            <li><strong>dtype dispatch</strong> via <code>AT_DISPATCH_ALL_TYPES(input.scalar_type(), "kernel_name", [&] { ... })</code> — the lambda is instantiated once per supported dtype.</li>
+            <li><strong>Parallelism</strong>: <code>at::parallel_for</code> for CPU; CUDA kernels are implicitly parallel.</li>
+            <li><strong>Data access</strong>: use <code>TensorAccessor</code> (bounds-checked, index-calculated) or raw pointers via <code>data_ptr&lt;scalar_t&gt;()</code>.</li>
+        </ol>
+
+        <p>Most production kernels also define a <code>derivatives.yaml</code> entry for autograd, which tells the codegen what backward formula to use — often composing existing ops, occasionally a hand-written <code>_backward</code> function.</p>
+
+        <div class="source-note">
+            Sources: NVIDIA CUDA C++ Programming Guide (chapters 1–5), <a href="https://docs.nvidia.com/cuda/cuda-c-programming-guide/" target="_blank">docs.nvidia.com</a>. PyTorch internals overview by Edward Yang, <a href="https://blog.ezyang.com/2019/05/pytorch-internals/" target="_blank">blog.ezyang.com</a> (May 2019).
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

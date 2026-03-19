@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSI Layers & Routing Protocols — Brian Won</title>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --text: #333333;
+            --accent: #666666;
+            --border: #eeeeee;
+            --primary: #2d5a87;
+            --secondary: #4a7ba7;
+            --highlight: #3d6b96;
+            --light-gray: #f5f5f5;
+            --gradient-start: #f8fafb;
+            --gradient-end: #e8f2f7;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.7;
+            color: var(--text);
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+            min-height: 100vh;
+        }
+        .page-wrap {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 2rem 24px 4rem;
+        }
+        /* Nav */
+        .top-nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 48px;
+            font-size: 0.9rem;
+        }
+        .top-nav a { color: var(--primary); text-decoration: none; border-bottom: 1px solid transparent; transition: border-bottom .15s; }
+        .top-nav a:hover { border-bottom: 1px solid var(--primary); }
+        .top-nav .sep { color: var(--accent); opacity: .5; }
+
+        /* Hero */
+        .post-hero {
+            margin-bottom: 48px;
+        }
+        .post-tag {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: .09em;
+            text-transform: uppercase;
+            color: var(--primary);
+            background: rgba(45,90,135,.1);
+            padding: 3px 10px;
+            border-radius: 20px;
+            margin-bottom: 14px;
+        }
+        .post-hero h1 {
+            font-size: 2.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1.25;
+            margin-bottom: 14px;
+        }
+        .post-meta { font-size: 0.85rem; color: var(--accent); display: flex; gap: 14px; flex-wrap: wrap; }
+        .post-meta span { display: flex; align-items: center; gap: 5px; }
+
+        /* TOC */
+        .toc {
+            background: white;
+            border-radius: 10px;
+            padding: 20px 24px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.06);
+            margin-bottom: 44px;
+        }
+        .toc h4 {
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 12px;
+        }
+        .toc ol { padding-left: 18px; }
+        .toc li { margin-bottom: 5px; }
+        .toc a { color: var(--primary); font-size: 0.88rem; text-decoration: none; border-bottom: 1px solid transparent; transition: border-bottom .15s; }
+        .toc a:hover { border-bottom: 1px solid var(--primary); }
+
+        /* Content */
+        .post-body { }
+        .post-body h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            border-left: 4px solid var(--secondary);
+            padding-left: 14px;
+            margin: 44px 0 16px;
+        }
+        .post-body h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--highlight);
+            margin: 28px 0 10px;
+        }
+        .post-body p { margin-bottom: 16px; font-size: 0.97rem; }
+        .post-body ul, .post-body ol { padding-left: 22px; margin-bottom: 16px; }
+        .post-body li { margin-bottom: 7px; font-size: 0.95rem; }
+        .post-body code {
+            background: rgba(45,90,135,.08);
+            color: var(--primary);
+            font-family: "SF Mono", "Fira Code", monospace;
+            font-size: 0.83em;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .post-body pre {
+            background: #1e2d3d;
+            color: #c9d8e8;
+            border-radius: 8px;
+            padding: 18px 20px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            font-family: "SF Mono", "Fira Code", monospace;
+            line-height: 1.55;
+        }
+
+        /* OSI Table */
+        .osi-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0 28px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 12px rgba(0,0,0,.06);
+            font-size: 0.88rem;
+        }
+        .osi-table thead tr { background: var(--primary); color: white; }
+        .osi-table th { padding: 11px 14px; text-align: left; font-weight: 600; }
+        .osi-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+        .osi-table tr:last-child td { border-bottom: none; }
+        .osi-table tr:nth-child(even) td { background: rgba(45,90,135,.03); }
+        .layer-num {
+            font-weight: 700;
+            color: var(--primary);
+            white-space: nowrap;
+        }
+        .layer-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-app { background: rgba(45,90,135,.12); color: var(--primary); }
+        .badge-transport { background: rgba(74,123,167,.15); color: #2a5d8a; }
+        .badge-network { background: rgba(61,107,150,.12); color: #2d5a87; }
+        .badge-link { background: rgba(90,145,199,.12); color: #3d6b96; }
+        .badge-physical { background: rgba(140,170,200,.15); color: #3d6b96; }
+
+        /* Callout */
+        .callout {
+            background: rgba(45,90,135,.07);
+            border-left: 4px solid var(--secondary);
+            border-radius: 0 8px 8px 0;
+            padding: 14px 18px;
+            margin: 20px 0;
+            font-size: 0.92rem;
+        }
+        .callout strong { color: var(--primary); }
+
+        /* Protocol comparison */
+        .proto-compare {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin: 20px 0;
+        }
+        .proto-card {
+            background: white;
+            border-radius: 8px;
+            padding: 16px 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.05);
+            border-top: 3px solid var(--secondary);
+        }
+        .proto-card h4 { color: var(--primary); font-size: 0.95rem; margin-bottom: 8px; }
+        .proto-card ul { padding-left: 16px; }
+        .proto-card li { font-size: 0.85rem; margin-bottom: 4px; color: var(--accent); }
+
+        @media (max-width: 600px) {
+            .proto-compare { grid-template-columns: 1fr; }
+            .post-hero h1 { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="page-wrap">
+
+    <nav class="top-nav">
+        <a href="blog.html">← Blog</a>
+        <span class="sep">/</span>
+        <span>Networking</span>
+    </nav>
+
+    <div class="post-hero">
+        <span class="post-tag">Networking</span>
+        <h1>OSI Layers, Routing Protocols, and How Packets Actually Move</h1>
+        <div class="post-meta">
+            <span>Brian Won</span>
+            <span>·</span>
+            <span>March 2025</span>
+            <span>·</span>
+            <span>18 min read</span>
+        </div>
+    </div>
+
+    <div class="toc">
+        <h4>Contents</h4>
+        <ol>
+            <li><a href="#osi">The OSI Model — all 7 layers</a></li>
+            <li><a href="#encapsulation">Encapsulation & the data unit journey</a></li>
+            <li><a href="#layer3">Layer 3 in depth: IP, subnetting, ARP</a></li>
+            <li><a href="#layer4">Layer 4 in depth: TCP vs UDP</a></li>
+            <li><a href="#routing">Routing protocols: RIP, OSPF, BGP</a></li>
+            <li><a href="#sdn">Modern angle: SDN and overlay networks</a></li>
+            <li><a href="#ml">Why this matters for ML systems</a></li>
+        </ol>
+    </div>
+
+    <div class="post-body">
+
+        <p>Network fundamentals are one of those things that get taught once in school and then quietly drift into "I'll re-learn this when I need it" territory. But if you're building or optimizing distributed systems — especially ML inference pipelines — the OSI model stops being a trivia question and starts being a debugging checklist. This is my attempt to write the reference I wish I'd had.</p>
+
+        <!-- OSI -->
+        <h2 id="osi">The OSI Model — All 7 Layers</h2>
+        <p>The Open Systems Interconnection model partitions network communication into seven abstraction layers. Each layer depends only on the layer below it and exposes a clean interface upward. In practice, TCP/IP collapses these into four, but the seven-layer model gives you precise vocabulary for where things break.</p>
+
+        <table class="osi-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Layer</th>
+                    <th>Data Unit</th>
+                    <th>Key Protocols / Examples</th>
+                    <th>What it does</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="layer-num">7</td>
+                    <td><span class="layer-badge badge-app">Application</span></td>
+                    <td>Data</td>
+                    <td>HTTP, HTTPS, DNS, SMTP, FTP, gRPC</td>
+                    <td>User-facing services; defines message format and app-level semantics.</td>
+                </tr>
+                <tr>
+                    <td class="layer-num">6</td>
+                    <td><span class="layer-badge badge-app">Presentation</span></td>
+                    <td>Data</td>
+                    <td>TLS/SSL, JPEG, Protobuf encoding</td>
+                    <td>Translation, encryption, compression. Ensures sender and receiver agree on data format.</td>
+                </tr>
+                <tr>
+                    <td class="layer-num">5</td>
+                    <td><span class="layer-badge badge-app">Session</span></td>
+                    <td>Data</td>
+                    <td>NetBIOS, RPC, NFS</td>
+                    <td>Manages sessions (open/close/checkpoint). Often baked into L7 protocols today.</td>
+                </tr>
+                <tr>
+                    <td class="layer-num">4</td>
+                    <td><span class="layer-badge badge-transport">Transport</span></td>
+                    <td>Segment</td>
+                    <td>TCP, UDP, QUIC, SCTP</td>
+                    <td>End-to-end delivery, port multiplexing, flow control, reliability (TCP) or not (UDP).</td>
+                </tr>
+                <tr>
+                    <td class="layer-num">3</td>
+                    <td><span class="layer-badge badge-network">Network</span></td>
+                    <td>Packet</td>
+                    <td>IP (v4/v6), ICMP, OSPF, BGP</td>
+                    <td>Logical addressing (IP), routing across networks. Routers live here.</td>
+                </tr>
+                <tr>
+                    <td class="layer-num">2</td>
+                    <td><span class="layer-badge badge-link">Data Link</span></td>
+                    <td>Frame</td>
+                    <td>Ethernet, Wi-Fi (802.11), ARP, PPP</td>
+                    <td>Node-to-node delivery on a single link. MAC addressing, error detection (CRC). Switches live here.</td>
+                </tr>
+                <tr>
+                    <td class="layer-num">1</td>
+                    <td><span class="layer-badge badge-physical">Physical</span></td>
+                    <td>Bit</td>
+                    <td>Ethernet cable, fiber, 802.11 radio, USB</td>
+                    <td>Electrical, optical, or radio transmission. Bit timing and signal encoding.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="callout">
+            <strong>Mnemonic (top-down):</strong> "All People Seem To Need Data Processing" — Application, Presentation, Session, Transport, Network, Data Link, Physical.
+        </div>
+
+        <!-- Encapsulation -->
+        <h2 id="encapsulation">Encapsulation & the Data Unit Journey</h2>
+        <p>When you send an HTTP request, each layer wraps the data from the layer above in its own header (and sometimes trailer). This wrapping is called <strong>encapsulation</strong>. On the receiving end, each layer strips its header and passes the payload up.</p>
+
+        <pre>
+[HTTP Request Body]                       ← Application data
+[TCP header | HTTP data]                  ← Segment (L4 adds port numbers, seq no.)
+[IP header | TCP header | HTTP data]      ← Packet (L3 adds src/dst IP)
+[ETH header | IP | TCP | HTTP | ETH CRC] ← Frame  (L2 adds MAC addresses, CRC)
+[bits on the wire / optical signal]       ← Physical transmission
+</pre>
+
+        <p>Each header adds overhead. A minimal HTTP/1.1 request over TCP/IP/Ethernet carries at least <strong>54 bytes of header</strong> before a single byte of application data. In high-throughput systems (ML serving, HFT), this matters.</p>
+
+        <!-- Layer 3 -->
+        <h2 id="layer3">Layer 3 In Depth: IP, Subnetting, ARP</h2>
+
+        <h3>IP Addressing</h3>
+        <p>IPv4 uses 32-bit addresses written in dotted-decimal notation (<code>192.168.1.1</code>). IPv6 uses 128-bit addresses in hex (<code>2001:db8::1</code>). An IP address consists of a <strong>network prefix</strong> and a <strong>host identifier</strong>; CIDR notation specifies the prefix length: <code>10.0.0.0/24</code> means the first 24 bits are the network, leaving 8 bits for hosts (254 usable addresses in this subnet).</p>
+
+        <h3>Subnetting</h3>
+        <p>Subnetting divides a network into smaller blocks to reduce broadcast domains and improve security. A <strong>subnet mask</strong> (<code>255.255.255.0</code> = <code>/24</code>) ANDed with an IP address yields the network address. Key subnetting math:</p>
+        <ul>
+            <li>Number of subnets when borrowing <em>n</em> bits: 2<sup>n</sup></li>
+            <li>Hosts per subnet: 2<sup>host bits</sup> − 2 (subtract broadcast and network address)</li>
+            <li>VLSM (Variable Length Subnet Masking) lets you carve different-sized blocks from the same space</li>
+        </ul>
+
+        <h3>ARP — Address Resolution Protocol</h3>
+        <p>IP gives you a logical destination, but frames need MAC addresses to traverse a single link. ARP bridges this gap. When host A needs to send to <code>192.168.1.5</code>:</p>
+        <ol>
+            <li>A broadcasts: "Who has <code>192.168.1.5</code>? Tell <code>AA:BB:CC:DD:EE:FF</code>."</li>
+            <li>The target replies with its MAC address.</li>
+            <li>A caches the mapping in its ARP table (<code>arp -n</code> to inspect).</li>
+        </ol>
+        <p>Gratuitous ARP (sending an ARP reply without a request) is used for conflict detection and is the basis of many L2 failover schemes.</p>
+
+        <!-- Layer 4 -->
+        <h2 id="layer4">Layer 4 In Depth: TCP vs UDP</h2>
+
+        <div class="proto-compare">
+            <div class="proto-card">
+                <h4>TCP — Transmission Control Protocol</h4>
+                <ul>
+                    <li>Connection-oriented (3-way handshake: SYN, SYN-ACK, ACK)</li>
+                    <li>Reliable: retransmits lost segments</li>
+                    <li>Ordered delivery via sequence numbers</li>
+                    <li>Flow control (receiver window) + congestion control (CWND, slow start, CUBIC/BBR)</li>
+                    <li>20-byte minimum header</li>
+                    <li>Use: HTTP, databases, SSH</li>
+                </ul>
+            </div>
+            <div class="proto-card">
+                <h4>UDP — User Datagram Protocol</h4>
+                <ul>
+                    <li>Connectionless, fire-and-forget</li>
+                    <li>No retransmission, no ordering guarantees</li>
+                    <li>8-byte header</li>
+                    <li>Application layer must handle reliability if needed</li>
+                    <li>Use: DNS, QUIC, video streaming, ML parameter servers</li>
+                    <li>Latency: ~50–100µs less round-trip vs TCP in LAN</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>TCP Congestion Control — the short version</h3>
+        <p>TCP tries to infer available bandwidth without explicit feedback. <strong>Slow start</strong> begins conservatively and doubles the congestion window (CWND) each RTT. Upon packet loss (inferred by timeout or triple duplicate ACK), CWND is slashed. Modern algorithms like <strong>BBR</strong> (Bottleneck Bandwidth and RTT) model the network explicitly and avoid filling queues, achieving lower latency and better throughput on lossy or long-haul paths.</p>
+
+        <!-- Routing -->
+        <h2 id="routing">Routing Protocols: RIP, OSPF, BGP</h2>
+        <p>Routing protocols let routers automatically discover paths and react to topology changes. They fall into two categories:</p>
+        <ul>
+            <li><strong>IGP (Interior Gateway Protocols)</strong> — operate within a single autonomous system (AS): RIP, OSPF, IS-IS, EIGRP.</li>
+            <li><strong>EGP (Exterior Gateway Protocols)</strong> — operate between ASes: BGP.</li>
+        </ul>
+
+        <h3>RIP — Routing Information Protocol</h3>
+        <p>RIP is a distance-vector protocol: each router broadcasts its full routing table to neighbors every 30 seconds. Metric is <strong>hop count</strong> (max 15; 16 = unreachable). Convergence is slow — the "count to infinity" problem can leave stale routes for minutes. RIPv2 adds CIDR and authentication. RIP is rarely used in production today except in small or legacy networks.</p>
+
+        <h3>OSPF — Open Shortest Path First</h3>
+        <p>OSPF is a link-state protocol. Each router floods <strong>Link State Advertisements (LSAs)</strong> throughout the AS, building a complete topology map (LSDB — Link State Database). Every router then independently runs <strong>Dijkstra's SPF algorithm</strong> on the LSDB to compute shortest paths. Key properties:</p>
+        <ul>
+            <li>Metric: interface cost (inversely proportional to bandwidth by default)</li>
+            <li>Converges in seconds after a link failure</li>
+            <li>Hierarchical: organizes routers into <strong>areas</strong>; Area 0 is the backbone. Inter-area routing goes through Area Border Routers (ABRs).</li>
+            <li>Supports ECMP (Equal Cost Multi-Path) — load-balances across multiple equal-cost routes</li>
+            <li>Uses multicast (<code>224.0.0.5</code>/<code>224.0.0.6</code>) to exchange LSAs, reducing unnecessary traffic vs RIP's broadcasts</li>
+        </ul>
+
+        <h3>BGP — Border Gateway Protocol</h3>
+        <p>BGP is the routing protocol of the internet. It's a path-vector protocol: instead of hop counts or link costs, BGP advertises full AS paths, enabling policy-based routing. A few key concepts:</p>
+        <ul>
+            <li><strong>eBGP</strong> — between different ASes (e.g., your ISP and a CDN)</li>
+            <li><strong>iBGP</strong> — within a single AS to propagate external routes internally</li>
+            <li>BGP selects routes using a complex decision process: local preference → AS path length → origin → MED → eBGP over iBGP → router-id. This ordering is why misconfigurations cause famous outages.</li>
+            <li><strong>Route reflectors</strong> solve the full-mesh requirement for iBGP in large networks</li>
+            <li>BGP hijacking (e.g., the 2008 Pakistan Telecom/YouTube incident) happens when a rogue AS announces more specific prefixes. RPKI (Resource Public Key Infrastructure) is the emerging fix.</li>
+        </ul>
+
+        <div class="callout">
+            <strong>Quick comparison:</strong> RIP = simple, slow, legacy. OSPF = fast convergence, hierarchical, widely used inside ISPs and data centers. BGP = the internet's glue, policy-driven, not designed for speed.
+        </div>
+
+        <!-- SDN -->
+        <h2 id="sdn">Modern Angle: SDN and Overlay Networks</h2>
+        <p>Software-Defined Networking decouples the <strong>control plane</strong> (deciding where traffic goes) from the <strong>data plane</strong> (actually forwarding packets). A centralized controller programs forwarding rules into switches via protocols like <strong>OpenFlow</strong>. This makes network topology programmable — critical for cloud data centers where VMs spin up and down constantly.</p>
+
+        <p><strong>Overlay networks</strong> (VXLAN, Geneve, GRE) build virtual L2 networks on top of L3 infrastructure. Kubernetes CNI plugins (Flannel, Calico, Cilium) use overlays or direct routing to give each pod its own IP regardless of which physical host it runs on. In ML clusters, RDMA over Converged Ethernet (RoCE) bypasses the kernel networking stack entirely to get GPU-to-GPU latencies in the single-digit microseconds.</p>
+
+        <!-- ML connection -->
+        <h2 id="ml">Why This Matters for ML Systems</h2>
+        <p>Distributed ML training and inference are fundamentally network-bound workloads once you scale beyond a single node. A few concrete implications:</p>
+        <ul>
+            <li><strong>All-reduce in training</strong> (gradient synchronization) saturates east-west bandwidth. Collective communication libraries (NCCL, Gloo) are designed around the network topology — ring-allreduce optimizes for bandwidth, while tree-allreduce optimizes for latency.</li>
+            <li><strong>P99 latency in inference serving</strong> is dominated by head-of-line blocking in TCP. This is why vLLM and TensorRT-LLM increasingly use UDP-based transports or RDMA for KV-cache transfer between nodes.</li>
+            <li><strong>Routing misconfigurations</strong> in cloud environments (e.g., asymmetric paths causing TCP retransmits) can silently inflate p99 by 10–100x. Understanding BGP and OSPF convergence helps you distinguish "my code is slow" from "the network is flapping."</li>
+            <li><strong>Overlay overhead:</strong> VXLAN adds 50 bytes of encapsulation per packet. For small tensor RPC calls this overhead is not trivial — batch size tuning and request coalescing matter at the network layer, not just the model layer.</li>
+        </ul>
+
+    </div>
+</div>
+</body>
+</html>
