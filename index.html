@@ -133,6 +133,11 @@
         
         .intro {
             padding: 0;
+            width: 100%;
+            display: flex;
+            flex-direction:column;
+            align-items: center;
+            text-align: center;
         }
         
         .intro h1 {
@@ -153,8 +158,8 @@
         }
         
         .profile-image {
-            width: 500px;
-            height: 500px;
+            width: 220px;
+            height: 220px;
             border-radius: 50%;
             object-fit: cover;
             border: 4px solid var(--primary);
@@ -305,106 +310,27 @@
             padding-top: 20px;
         }
         
-        /* Extra large desktop styles */
+        
         @media (min-width: 1400px) {
             .profile-image {
-                width: 600px;
-                height: 600px;
-                border-width: 6px;
+                width: 260px;
+                height: 260px;
             }
         }
         
         /* Large desktop styles */
         @media (min-width: 1200px) and (max-width: 1399px) {
             .profile-image {
-                width: 500px;
-                height: 500px;
+                width: 200px;
+                height: 200px;
             }
             
             body {
-                max-width: 1000px;
+                max-width: 270px;
             }
         }
-        
-        /* Medium desktop styles */
-        @media (min-width: 1025px) and (max-width: 1199px) {
-            .profile-image {
-                width: 400px;
-                height: 400px;
-            }
-        }
-        
-        /* Tablet styles */
-        @media (min-width: 769px) and (max-width: 1024px) {
-            .profile-image {
-                width: 350px;
-                height: 350px;
-            }
-        }
-        
-        /* Mobile styles */
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 20px;
-            }
-            
-            .experience-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .skills-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .profile-image {
-                width: 250px;
-                height: 250px;
-                border-width: 3px;
-            }
-            
-            .intro h1 {
-                font-size: 2rem;
-            }
-            
-            .intro p {
-                font-size: 1rem;
-            }
-        }
-        
-        /* Small mobile styles */
-        @media (max-width: 480px) {
-            .profile-image {
-                width: 200px;
-                height: 200px;
-                border-width: 2px;
-                margin-bottom: 15px;
-            }
-            
-            .intro h1 {
-                font-size: 1.8rem;
-            }
-            
-            .contact-links {
-                gap: 10px;
-            }
-            
-            .icon {
-                width: 20px;
-                height: 20px;
-            }
-        }
-        
-        /* Extra small mobile styles */
-        @media (max-width: 360px) {
-            .profile-image {
-                width: 180px;
-                height: 180px;
-                border-width: 2px;
-            }
-        }
+
+
         /* Timeline Section */
         /* Clean Timeline Section (no blue dots behind logos) */
         .timeline {
@@ -549,7 +475,7 @@
                 <li><a href="#experience">Experience</a></li>
                 
                 <li><a href="#contact">Contact</a></li>
-                <li><a href="media/BW_resume.pdf" title="Resume" target="_blank">CV</a></li>
+                <li><a href="media/Injong_Won_Resume.pdf" title="Resume" target="_blank">CV</a></li>
                 <li><a href="blog.html" title="Blog">Blog</a></li>
             </ul>
         </nav>
@@ -598,7 +524,7 @@
         <div class="about-content">
             <div>
                 <p>
-                   Hey! I'm Brian; cs grad from UofT. I'm interested in ml inference and low-level network system.
+                   Hey! I'm Brian; cs grad from UofT. I'm interested in ml inference and Model optimization 
                 </p>
                 <p>
                 
