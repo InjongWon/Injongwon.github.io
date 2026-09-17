@@ -199,7 +199,8 @@
         }
 
         .project-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
-        .project-card h3 { font-size: 1.05rem; margin-bottom: 6px; }
+        .project-card h3 { font-size: 1.05rem; margin-bottom: 10px; }
+        .project-card .tag-row { margin-top: 6px; flex: 1; align-content: flex-start; }
 
         .demo-badge {
             display: inline-block;
@@ -211,6 +212,23 @@
             font-weight: 600;
             margin-bottom: 12px;
             align-self: flex-start;
+        }
+
+        .stat-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(45,90,135,0.08);
+            border: 1px solid rgba(45,90,135,0.18);
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            margin-bottom: 12px;
+            align-self: flex-start;
+            white-space: normal;
         }
 
         .project-card ul {
@@ -454,19 +472,13 @@
 
        <!-- PROJECTS -->
        <section id="projects">
-        <h2>Featured Projects</h2>
+        <h2>Selected Projects</h2>
         <div class="project-grid">
 
             <!-- Adaptive LLM Inference Engine -->
             <div class="project-card">
                 <h3>Adaptive LLM Inference Engine</h3>
                 <span class="stat-badge">600+ tok/s · P99 &lt;3s · 32 concurrent</span>
-                <ul>
-                    <li>Production-style OpenAI-compatible inference gateway built on vLLM with continuous batching and PagedAttention KV-cache management.</li>
-                    <li>Multi-GPU tensor-parallel inference with NCCL; benchmarked INT4 quantization and speculative decoding under production workloads.</li>
-                    <li>Prometheus + Grafana dashboards tracking TTFT, KV-cache pressure, GPU utilization, and P95/P99 latency in real time.</li>
-                    <li>Reduced inter-token latency by 22% and model-weight memory by 65% through systematic profiling and optimization.</li>
-                </ul>
                 <div class="tag-row">
                     <span class="tag">vLLM</span>
                     <span class="tag">CUDA</span>
@@ -483,11 +495,6 @@
             <div class="project-card">
                 <h3>Needle DL Engine</h3>
                 <span class="stat-badge">From-scratch · C++ CPU + CUDA GPU</span>
-                <ul>
-                    <li>Deep learning framework built from scratch — reverse-mode automatic differentiation engine, computational graph, and N-dimensional array runtime.</li>
-                    <li>Custom C++ CPU backend and CUDA GPU backend with tiled matrix-multiplication kernels and memory-efficient tensor operations.</li>
-                    <li>Trained CNN, RNN, LSTM, and Transformer (multi-head attention, prenorm residual) models end-to-end on MNIST, CIFAR-10, and Penn Treebank.</li>
-                </ul>
                 <div class="tag-row">
                     <span class="tag">C++</span>
                     <span class="tag">CUDA</span>
@@ -503,12 +510,6 @@
             <div class="project-card">
                 <h3>MiniLLM — Pretraining & Kernel Work</h3>
                 <span class="stat-badge">Flash Attention 2 · DDP · FSDP</span>
-                <ul>
-                    <li>Implemented Flash Attention 2 kernel in Triton with activation checkpointing to reduce memory I/O under large-context workloads.</li>
-                    <li>Distributed training with NCCL-backed Distributed Data Parallel (DDP) and Fully Sharded Data Parallel (FSDP) across multi-GPU systems.</li>
-                    <li>Built GPU profiling and benchmarking harness measuring kernel throughput, GPU utilization, and memory bandwidth.</li>
-                    <li>Ran scaling-law experiments to characterize compute-optimal model sizing.</li>
-                </ul>
                 <div class="tag-row">
                     <span class="tag">PyTorch</span>
                     <span class="tag">Triton</span>
@@ -525,12 +526,6 @@
             <div class="project-card">
                 <h3>EdgeRAG</h3>
                 <span class="demo-badge">Interactive Demo Available</span>
-                <ul>
-                    <li>Edge-optimized RAG system for financial analysis, focusing on retrieval accuracy, latency, and response grounding.</li>
-                    <li>Iterating on chunking heuristics and metadata-aware retrieval for financial text.</li>
-                    <li>Comparing standalone LLM outputs vs retrieval-augmented responses for factual consistency.</li>
-                    <li>Exploring memory usage, model size trade-offs, and inference performance at the edge.</li>
-                </ul>
                 <div class="tag-row">
                     <span class="tag">Python</span>
                     <span class="tag">Vector DB</span>
@@ -548,11 +543,6 @@
             <div class="project-card">
                 <h3>Performance Bid-Ask Order Book</h3>
                 <span class="demo-badge">Interactive Demo Available</span>
-                <ul>
-                    <li>Sub-500ns price-time priority matching engine in C++17 with lock-free order ingestion and cache-line aligned structs.</li>
-                    <li>Profiled via Google Benchmark and perf to eliminate L1 cache bottlenecks on the critical match path.</li>
-                    <li>Dynamic order book with fixed-size array + linked list for efficient maintenance and retrieval.</li>
-                </ul>
                 <div class="tag-row">
                     <span class="tag">C++</span>
                     <span class="tag">Prop Trading</span>
